@@ -314,7 +314,7 @@ select option{background:#4c1d95;color:#fff}
       <div class="output-actions">
         <button class="btn btn-sm" id="improveBtn" onclick="improve()" disabled>🪄 Improve</button>
         <button class="btn btn-sm" id="copyBtn" onclick="copyText()" disabled>Copy</button>
-        <button class="btn btn-sm" id="dlBtn" onclick="download()" disabled>⬇ Download</button>
+        <button class="btn btn-sm" id="dlBtn" onclick="download()" disabled>⬇ PDF</button>
       </div>
     </div>
 
@@ -515,14 +515,49 @@ async function copyText() {
   } catch { toast("Copy failed.", "error"); }
 }
 
-// ── Download ──────────────────────────────────────────────────────────────────
+// ── Download as PDF ───────────────────────────────────────────────────────────
 function download() {
   if (!resume) return;
-  const name = document.getElementById("name").value.trim().replace(/\s+/g,"_") || "resume";
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([resume], {type:"text/plain"}));
-  a.download = `${name}_resume.txt`; a.click();
-  toast("Downloaded!", "success");
+  const name = document.getElementById("name").value.trim() || "Resume";
+
+  const printWindow = window.open("", "_blank");
+  printWindow.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>${name} — Resume</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;font-size:11pt;color:#1e293b;background:#fff;padding:2.5cm 2cm;line-height:1.6}
+    .r-name{font-family:'Outfit',sans-serif;font-size:22pt;font-weight:800;color:#4f46e5;margin-bottom:2pt}
+    .r-role{font-size:11pt;color:#64748b;margin-bottom:14pt;font-weight:500}
+    .r-section{font-size:8pt;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4f46e5;margin-top:14pt;margin-bottom:3pt}
+    .r-divider{border:none;border-top:1.5px solid #e2e8f0;margin-bottom:8pt}
+    .r-bullet{padding-left:14pt;margin-bottom:3pt;position:relative}
+    .r-bullet::before{content:"•";position:absolute;left:4pt;color:#4f46e5}
+    .r-line{margin-bottom:3pt}
+    br{display:block;margin:4pt 0}
+    @media print{
+      body{padding:1.5cm 1.5cm}
+      @page{margin:0;size:A4}
+    }
+  </style>
+</head>
+<body>${renderResume(resume, "classic")
+  .replace(/class="fmt-classic"/g, '')
+  .replace(/class="r-/g, 'class="r-')
+}</body>
+</html>`);
+
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => {
+    printWindow.print();
+    printWindow.close();
+  }, 600);
+
+  toast("Opening PDF export...", "success");
 }
 
 // Clear invalid on type
