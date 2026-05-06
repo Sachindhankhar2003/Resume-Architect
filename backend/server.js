@@ -45,6 +45,9 @@ const frontendPath = path.join(__dirname, "..", "frontend", "index.html");
 
 app.get("/", (req, res) => {
     if (fs.existsSync(frontendPath)) {
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
         res.sendFile(frontendPath);
     } else {
         res.json({ status: "ok", message: "Resume Builder API is running ✅" });
