@@ -139,6 +139,21 @@ Improve an existing resume with AI.
 
 ---
 
+### `GET /health`
+Check API server status and uptime.
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "uptime": 120,
+  "timestamp": "2026-07-28T20:55:00.000Z",
+  "service": "Resume Architect API"
+}
+```
+
+---
+
 ## 🌐 Deploy on Render (Free)
 
 1. Go to [render.com](https://render.com) → **New Web Service**

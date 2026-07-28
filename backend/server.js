@@ -40,6 +40,16 @@ function sanitize(str = "") {
     return String(str).trim().slice(0, 2000);
 }
 
+// ─── GET /health ───────────────────────────────────────────────────────────────
+app.get("/health", (req, res) => {
+    res.json({
+        status: "ok",
+        uptime: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString(),
+        service: "Resume Architect API"
+    });
+});
+
 // ─── Serve Frontend ────────────────────────────────────────────────────────────
 const frontendPath = path.join(__dirname, "..", "frontend", "index.html");
 

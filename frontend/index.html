@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -314,6 +314,7 @@ select option{background:#4c1d95;color:#fff}
       <div class="output-actions">
         <button class="btn btn-sm" id="improveBtn" onclick="improve()" disabled>🪄 Improve</button>
         <button class="btn btn-sm" id="copyBtn" onclick="copyText()" disabled>Copy</button>
+        <button class="btn btn-sm" id="dlTxtBtn" onclick="downloadTxt()" disabled>📄 TXT</button>
         <button class="btn btn-sm" id="dlBtn" onclick="download()" disabled>⬇ PDF</button>
       </div>
     </div>
@@ -468,7 +469,7 @@ async function generate() {
       resume = data.result;
       document.getElementById("output").innerHTML = renderResume(resume, activeFmt);
       renderAts(atsScore(resume));
-      ["improveBtn","copyBtn","dlBtn"].forEach(id => document.getElementById(id).disabled = false);
+      ["improveBtn","copyBtn","dlBtn","dlTxtBtn"].forEach(id => document.getElementById(id).disabled = false);
       toast("Resume generated!", "success");
     }
   } catch(e) {
@@ -513,6 +514,18 @@ async function copyText() {
     setTimeout(() => { b.textContent = "Copy"; b.classList.remove("copied"); }, 2000);
     toast("Copied!", "success");
   } catch { toast("Copy failed.", "error"); }
+}
+
+// ── Download Plain Text (.txt) ────────────────────────────────────────────────
+function downloadTxt() {
+  if (!resume) return;
+  const name = document.getElementById("name").value.trim() || "Resume";
+  const blob = new Blob([resume], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${name.replace(/\s+/g, "_")}_resume.txt`;
+  a.click();
+  toast("Downloaded TXT resume!", "success");
 }
 
 // ── Download as PDF (desktop) / HTML (mobile) ─────────────────────────────────
